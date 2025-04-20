@@ -12,31 +12,34 @@
   <button id="beaconButton">Send Beacon</button>
 
   <script>
+    // 追加: シーケンス番号をインクリメントしながら付与
+    let sequenceNum = 1;
+
     const fetchLaterBtn = document.getElementById("fetchLaterButton");
     const fetchBtn      = document.getElementById("fetchButton");
     const beaconBtn     = document.getElementById("beaconButton");
 
     // fetchLater
     fetchLaterBtn.addEventListener("click", async () => {
+      const url = `/api/data?request_type=fetchLater&sequence_num=${sequenceNum++}`;
       const res = await fetchLater(
-        '/api/data?request_type=fetchLater',
+        url,
         { method: 'GET', headers: {"test": "test"}, activateAfter: 10000 }
       );
     });
 
     // Normal Fetch
     fetchBtn.addEventListener("click", async () => {
-      const res  = await fetch('/api/data?request_type=fetch', { method: 'GET', headers: {"test": "test"} });
+      const url = `/api/data?request_type=fetch&sequence_num=${sequenceNum++}`;
+      const res  = await fetch(url, { method: 'GET', headers: {"test": "test"} });
       const data = await res.json();
     });
 
     // sendBeacon
     beaconBtn.addEventListener("click", () => {
-
+      const url     = `/api/data?request_type=sendBeacon&sequence_num=${sequenceNum++}`;
       const payload = JSON.stringify({ foo: 'bar', timestamp: Date.now() });
       const blob    = new Blob([payload], { type: 'application/json' });
-      const url     = '/api/data?request_type=sendBeacon';
-
       const success = navigator.sendBeacon(url, blob);
     });
   </script>
