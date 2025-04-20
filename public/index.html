@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>fetchLaterAPI Playground</title>
+</head>
+<body>
+  <h1>fetchLaterAPI Playground</h1>
+
+  <button id="fetchLaterButton">fetchLater</button>
+  <button id="fetchButton">Normal Fetch</button>
+  <button id="beaconButton">Send Beacon</button>
+
+  <script>
+    const fetchLaterBtn = document.getElementById("fetchLaterButton");
+    const fetchBtn      = document.getElementById("fetchButton");
+    const beaconBtn     = document.getElementById("beaconButton");
+
+    // fetchLater
+    fetchLaterBtn.addEventListener("click", async () => {
+      const res = await fetchLater(
+        '/api/data?request_type=fetchLater',
+        { method: 'GET', headers: {"test": "test"}, activateAfter: 10000 }
+      );
+    });
+
+    // Normal Fetch
+    fetchBtn.addEventListener("click", async () => {
+      const res  = await fetch('/api/data?request_type=fetch', { method: 'GET', headers: {"test": "test"} });
+      const data = await res.json();
+    });
+
+    // sendBeacon
+    beaconBtn.addEventListener("click", () => {
+
+      const payload = JSON.stringify({ foo: 'bar', timestamp: Date.now() });
+      const blob    = new Blob([payload], { type: 'application/json' });
+      const url     = '/api/data?request_type=sendBeacon';
+
+      const success = navigator.sendBeacon(url, blob);
+    });
+  </script>
+</body>
+</html>
